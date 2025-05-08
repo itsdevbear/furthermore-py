@@ -59,25 +59,25 @@ wheels = [
 [[package]]
 name = "furthermore-py"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
-    { name = "build" },
     { name = "requests" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "build" },
     { name = "ruff" },
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "build", specifier = ">=1.2.2.post1" },
-    { name = "requests", specifier = ">=2.32.3" },
-]
+requires-dist = [{ name = "requests", specifier = ">=2.32.3" }]
 
 [package.metadata.requires-dev]
-dev = [{ name = "ruff", specifier = ">=0.11.8" }]
+dev = [
+    { name = "build", specifier = ">=1.2.2.post1" },
+    { name = "ruff", specifier = ">=0.11.8" },
+]
 
 [[package]]
 name = "idna"
