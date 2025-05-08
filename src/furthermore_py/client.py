@@ -136,15 +136,15 @@ class FurthermoreClient:
             return
 
         current_level = data
-        for key in path[:-1]:  # Traverse to the parent of the target name
+        for key in path[:-1]:
             current_level = current_level.get(key)
             if not isinstance(current_level, dict):
-                return  # Path broken or not a dict, cannot continue
+                return  
 
         name_value = current_level.get(path[-1])
         if isinstance(name_value, str):
             stripped_name = name_value.strip()
-            if stripped_name:  # Ensure it's not an empty string after stripping
+            if stripped_name: 
                 target_set.add(stripped_name)
 
     def get_vaults(
