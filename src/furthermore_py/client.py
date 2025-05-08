@@ -120,6 +120,33 @@ class FurthermoreClient:
             )
             raise
 
+    def _extract_and_add_name(
+        self, data: dict | None, path: tuple[str, ...], target_set: set[str]
+    ):
+        """
+        Safely extracts a name from a nested dictionary path and adds it to the target set
+        if the name is a non-empty string.
+
+        Args:
+            data: The dictionary to extract from (e.g., metadata).
+            path: A tuple of keys representing the path to the name.
+            target_set: The set to add the validated name to.
+        """
+        if not isinstance(data, dict):
+            return
+
+        current_level = data
+        for key in path[:-1]:  # Traverse to the parent of the target name
+            current_level = current_level.get(key)
+            if not isinstance(current_level, dict):
+                return  # Path broken or not a dict, cannot continue
+
+        name_value = current_level.get(path[-1])
+        if isinstance(name_value, str):
+            stripped_name = name_value.strip()
+            if stripped_name:  # Ensure it's not an empty string after stripping
+                target_set.add(stripped_name)
+
     def get_vaults(
         self,
         offset: int = 0,
@@ -189,32 +216,13 @@ class FurthermoreClient:
         protocols: set[str] = set()
         incentivizers: set[str] = set()
         try:
-            # Corrected method call from get_articles to get_vaults
             vault_data = self.get_vaults(limit=vault_limit_for_scan)
 
             for vault in vault_data.get("vaults", []):
                 metadata = vault.get("metadata")
-                if not isinstance(metadata, dict):
-                    continue  # Skip if metadata is not a dictionary or missing
-
-                # Extract from metadata.protocolName
-                if p_name_direct := metadata.get("protocolName"):
-                    if isinstance(p_name_direct, str) and p_name_direct.strip():
-                        protocols.add(p_name_direct.strip())
-
-                # Extract from metadata.protocol.name
-                if protocol_obj := metadata.get("protocol"):
-                    if isinstance(protocol_obj, dict):
-                        if p_name_nested := protocol_obj.get("name"):
-                            if isinstance(p_name_nested, str) and p_name_nested.strip():
-                                protocols.add(p_name_nested.strip())
-
-                # Extract from metadata.incentivizer.name
-                if incentivizer_obj := metadata.get("incentivizer"):
-                    if isinstance(incentivizer_obj, dict):
-                        if i_name := incentivizer_obj.get("name"):
-                            if isinstance(i_name, str) and i_name.strip():
-                                incentivizers.add(i_name.strip())
+                self._extract_and_add_name(metadata, ("protocolName",), protocols)
+                self._extract_and_add_name(metadata, ("protocol", "name"), protocols)
+                self._extract_and_add_name(metadata, ("incentivizer", "name"), incentivizers)
 
             self.logger.info(
                 f"Found {len(protocols)} unique protocols and {len(incentivizers)} unique incentivizers."
