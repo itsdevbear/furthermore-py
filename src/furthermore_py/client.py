@@ -37,7 +37,7 @@ class FurthermoreClient:
         logger: logging.Logger | None = None,
     ):
         """
-        Initializes the Client.
+        Initializes the FurthermoreClient.
 
         Args:
             base_url: The base URL for the Furthermore API.
@@ -63,7 +63,7 @@ class FurthermoreClient:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
-        self.logger.info(f"Client initialized with base URL: {self.base_url}")
+        self.logger.info(f"FurthermoreClient initialized with base URL: {self.base_url}")
 
     def _make_request(
         self,
