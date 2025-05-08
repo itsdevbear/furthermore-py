@@ -3,23 +3,23 @@ import os
 
 import requests
 
-from furthermore_py import Client
+from furthermore_py import FurthermoreClient
 
 # Basic Example - Run this script directly to test the collector
 if __name__ == "__main__":
-    print("Attempting to use FurthermoreCo  lector (Example Usage)...")
+    print("Attempting to use FurthermoreCollector (Example Usage)...")
 
-    api_key_present = os.getenv(Client.FURTHERMORE_API_KEY_ENV_VAR)
+    api_key_present = os.getenv(FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR)
     if not api_key_present:
         print(
-            f"CRITICAL: The environment variable '{Client.FURTHERMORE_API_KEY_ENV_VAR}' is not set."
+            f"CRITICAL: The environment variable '{FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR}' is not set."
         )
         print(
-            "Please set it before running this example (e.g., export {Client.FURTHERMORE_API_KEY_ENV_VAR}=your_key)."
+            "Please set it before running this example (e.g., export {FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR}=your_key)."
         )
     else:
         print(
-            f"Environment variable '{Client.FURTHERMORE_API_KEY_ENV_VAR}' is set."
+            f"Environment variable '{FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR}' is set."
         )
         example_logger = logging.getLogger("ClientExample")
         example_logger.setLevel(logging.INFO)
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             ch.setFormatter(formatter)
             example_logger.addHandler(ch)
             example_logger.propagate = False
-        client = Client(logger=example_logger)
+        client = FurthermoreClient(logger=example_logger)
 
         try:
             print("\nFetching articles (first 3 vaults):")
