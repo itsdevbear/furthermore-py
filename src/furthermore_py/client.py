@@ -63,7 +63,9 @@ class FurthermoreClient:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
-        self.logger.info(f"FurthermoreClient initialized with base URL: {self.base_url}")
+        self.logger.info(
+            f"FurthermoreClient initialized with base URL: {self.base_url}"
+        )
 
     def _make_request(
         self,
@@ -139,12 +141,12 @@ class FurthermoreClient:
         for key in path[:-1]:
             current_level = current_level.get(key)
             if not isinstance(current_level, dict):
-                return  
+                return
 
         name_value = current_level.get(path[-1])
         if isinstance(name_value, str):
             stripped_name = name_value.strip()
-            if stripped_name: 
+            if stripped_name:
                 target_set.add(stripped_name)
 
     def get_vaults(
@@ -222,7 +224,9 @@ class FurthermoreClient:
                 metadata = vault.get("metadata")
                 self._extract_and_add_name(metadata, ("protocolName",), protocols)
                 self._extract_and_add_name(metadata, ("protocol", "name"), protocols)
-                self._extract_and_add_name(metadata, ("incentivizer", "name"), incentivizers)
+                self._extract_and_add_name(
+                    metadata, ("incentivizer", "name"), incentivizers
+                )
 
             self.logger.info(
                 f"Found {len(protocols)} unique protocols and {len(incentivizers)} unique incentivizers."
