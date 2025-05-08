@@ -7,3 +7,41 @@ requires-python = ">=3.13"
 dependencies = [
     "requests>=2.32.3",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.8",
+]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+fix = true
+show-fixes = true
+exclude = ["migrations", "__pycache__"]
+extend-include = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = [
+  "E",    # pycodestyle errors
+  "F",    # pyflakes
+  "I",    # isort
+  "UP",   # pyupgrade
+  "B",    # bugbear
+  "SIM",  # simplify
+  "C4",   # comprehensions
+  "DTZ",  # datetimez
+  "T20",  # print statements / debugger
+]
+ignore = [
+  "E501", # line length (you already have a setting for this)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/examples/basic.py" = ["T201"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
