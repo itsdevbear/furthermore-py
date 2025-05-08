@@ -108,7 +108,8 @@ if __name__ == '__main__':
         print(f"API request error: {re}")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-```
+
+### How to Run the Example Script
 
 To run the example script (e.g., if it's `src/examples/basic.py`), ensure your virtual environment is activated and you are in the project root directory:
 
@@ -120,6 +121,59 @@ python src/examples/basic.py
 
 For more details on the API endpoints and responses, refer to the unofficial Gist:
 [https://gist.github.com/asianviking/b87cad7b9e0b0519f1ae8bdb8121398b](https://gist.github.com/asianviking/b87cad7b9e0b0519f1ae8bdb8121398b)
+
+## Development
+
+This section outlines tools and practices for developing `furthermore-py`.
+
+### Linting and Formatting
+
+This project uses [Ruff](https://github.com/astral-sh/ruff) for linting and code formatting to ensure code quality and consistency.
+
+**Installation:**
+
+Ruff is included as a development dependency in `pyproject.toml`. If you followed the main installation steps using `uv pip install .` or `uv sync`, and it included development dependencies (e.g., via an extras group like `dev` if configured, or by default if not specified otherwise), Ruff should already be installed. 
+
+To ensure you have all development dependencies, you can explicitly install them. If your `pyproject.toml` defines a `dev` extras group like this:
+
+```toml
+[project.optional-dependencies]
+dev = [
+  "ruff>=0.11.8",
+  # ... other dev tools
+]
+```
+
+Then install with:
+```bash
+uv pip install .[dev]
+```
+
+If development dependencies are listed directly under `[project.dependencies]` or there isn't a specific `dev` group for them, the standard `uv pip install .` or `uv sync` should suffice.
+
+**Configuration:**
+
+Ruff is configured in the `pyproject.toml` file under the `[tool.ruff]` section. This includes settings for line length, selected rules, and formatting preferences.
+
+**Usage:**
+
+Make sure your virtual environment is activated (`source .venv/bin/activate`).
+
+-   **To check for linting issues:**
+    ```bash
+    uv run ruff check .
+    ```
+
+-   **To automatically fix linting issues (where possible) and format the code:**
+    First, apply formatting:
+    ```bash
+    uv run ruff format .
+    ```
+    Then, apply lint fixes:
+    ```bash
+    uv run ruff check . --fix
+    ```
+    Ruff's formatter will handle most style issues, and `check --fix` will address other auto-fixable linting errors.
 
 ## Contributing
 

@@ -203,11 +203,17 @@ class FurthermoreClient:
 
                         # Check metadata.protocol.name as per API response structure
                         protocol_info = metadata.get("protocol")
-                        if isinstance(protocol_info, dict) and protocol_info.get("name"):
+                        if isinstance(protocol_info, dict) and protocol_info.get(
+                            "name"
+                        ):
                             protocols.add(protocol_info["name"])
 
                         incentivizer_info = metadata.get("incentivizer")
-                        if isinstance(incentivizer_info, dict) and incentivizer_info.get("name") and incentivizer_info["name"].strip():
+                        if (
+                            isinstance(incentivizer_info, dict)
+                            and incentivizer_info.get("name")
+                            and incentivizer_info["name"].strip()
+                        ):
                             incentivizers.add(incentivizer_info["name"].strip())
 
             self.logger.info(
