@@ -14,7 +14,7 @@ This client provides methods to interact with the Furthermore API endpoints for 
 ## Requirements
 
 - Python >=3.13 (as per `pyproject.toml`)
-- `requests` library
+- `requests` library (will be installed via `pyproject.toml`)
 - A Furthermore API key
 
 ## Installation
@@ -25,15 +25,24 @@ This client provides methods to interact with the Furthermore API endpoints for 
     cd furthermore-py
     ```
 
-2.  **Install dependencies:**
-    Currently, `pyproject.toml` does not list `requests`. You might need to add it or install it manually:
+2.  **Create and activate a virtual environment using `uv`:**
     ```bash
-    pip install requests
-    # If you update pyproject.toml to include dependencies:
-    # pip install .
+    uv venv
+    source .venv/bin/activate  # On macOS/Linux
+    # .venv\Scripts\activate    # On Windows
     ```
 
-3.  **Set the API Key:**
+3.  **Install dependencies:**
+    With `requests` now listed in your `pyproject.toml`, you can install all project dependencies (including `requests` and the project itself in editable mode if desired) using:
+    ```bash
+    uv pip install .
+    ```
+    Alternatively, to synchronize your environment with the `pyproject.toml` (recommended after pulling changes or modifying dependencies):
+    ```bash
+    uv sync
+    ```
+
+4.  **Set the API Key:**
     The client requires the `FURTHERMORE_API_KEY` environment variable to be set.
     ```bash
     export FURTHERMORE_API_KEY="your_actual_api_key_here"
@@ -101,7 +110,7 @@ if __name__ == '__main__':
         print(f"An unexpected error occurred: {e}")
 ```
 
-To run the example script (e.g., if it's `src/examples/basic.py`):
+To run the example script (e.g., if it's `src/examples/basic.py`), ensure your virtual environment is activated and you are in the project root directory:
 
 ```bash
 python src/examples/basic.py
