@@ -1,16 +1,16 @@
 [project]
 name = "furthermore-py"
-version = "0.1.1"
+version = "0.1.2"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "requests>=2.32.3",
 ]
 
 [dependency-groups]
 dev = [
-    "build>=1.2.2.post1",
+    "build>=1.2.2",
     "ruff>=0.11.8",
 ]
 
