@@ -37,7 +37,7 @@ class FurthermoreClient:
         logger: logging.Logger | None = None,
     ):
         """
-        Initializes the FurthermoreClient.
+        Initializes the Client.
 
         Args:
             base_url: The base URL for the Furthermore API.
@@ -64,7 +64,7 @@ class FurthermoreClient:
             "Content-Type": "application/json",
         }
         self.logger.info(
-            f"FurthermoreClient initialized with base URL: {self.base_url}"
+            f"Client initialized with base URL: {self.base_url}"
         )
 
     def _make_request(
@@ -122,7 +122,7 @@ class FurthermoreClient:
             )
             raise
 
-    def get_articles(
+    def get_vaults(
         self,
         offset: int = 0,
         limit: int = 10,
@@ -130,7 +130,7 @@ class FurthermoreClient:
         sort_direction: str | None = None,
     ) -> dict[str, Any]:
         """
-        Fetches a list of articles (vaults) from the API's `/vaults` endpoint.
+        Fetches a list of vaults from the API's `/vaults` endpoint.
 
         Args:
             offset: Number of records to skip (for pagination).
@@ -172,7 +172,7 @@ class FurthermoreClient:
     def get_sources(self, vault_limit_for_scan: int = 100) -> dict[str, set[str]]:
         """
         Extracts unique source names (protocols and incentivizers) by analyzing vault data.
-        This method calls `get_articles` to fetch a sample of vaults and extracts
+        This method calls `get_vaults` to fetch a sample of vaults and extracts
         protocol and incentivizer names from their metadata.
 
         Args:
@@ -191,30 +191,32 @@ class FurthermoreClient:
         protocols: set[str] = set()
         incentivizers: set[str] = set()
         try:
-            vault_data = self.get_articles(limit=vault_limit_for_scan)
+            # Corrected method call from get_articles to get_vaults
+            vault_data = self.get_vaults(limit=vault_limit_for_scan)
 
-            if "vaults" in vault_data and isinstance(vault_data["vaults"], list):
-                for vault in vault_data["vaults"]:
-                    metadata = vault.get("metadata")
-                    if isinstance(metadata, dict):
-                        protocol_name = metadata.get("protocolName")
-                        if protocol_name:
-                            protocols.add(protocol_name)
+            for vault in vault_data.get("vaults", []):
+                metadata = vault.get("metadata")
+                if not isinstance(metadata, dict):
+                    continue  # Skip if metadata is not a dictionary or missing
 
-                        # Check metadata.protocol.name as per API response structure
-                        protocol_info = metadata.get("protocol")
-                        if isinstance(protocol_info, dict) and protocol_info.get(
-                            "name"
-                        ):
-                            protocols.add(protocol_info["name"])
+                # Extract from metadata.protocolName
+                if p_name_direct := metadata.get("protocolName"):
+                    if isinstance(p_name_direct, str) and p_name_direct.strip():
+                        protocols.add(p_name_direct.strip())
 
-                        incentivizer_info = metadata.get("incentivizer")
-                        if (
-                            isinstance(incentivizer_info, dict)
-                            and incentivizer_info.get("name")
-                            and incentivizer_info["name"].strip()
-                        ):
-                            incentivizers.add(incentivizer_info["name"].strip())
+                # Extract from metadata.protocol.name
+                if protocol_obj := metadata.get("protocol"):
+                    if isinstance(protocol_obj, dict):
+                        if p_name_nested := protocol_obj.get("name"):
+                            if isinstance(p_name_nested, str) and p_name_nested.strip():
+                                protocols.add(p_name_nested.strip())
+                
+                # Extract from metadata.incentivizer.name
+                if incentivizer_obj := metadata.get("incentivizer"):
+                    if isinstance(incentivizer_obj, dict):
+                        if i_name := incentivizer_obj.get("name"):
+                            if isinstance(i_name, str) and i_name.strip():
+                                incentivizers.add(i_name.strip())
 
             self.logger.info(
                 f"Found {len(protocols)} unique protocols and {len(incentivizers)} unique incentivizers."

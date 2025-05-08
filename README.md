@@ -47,27 +47,27 @@ This client provides methods to interact with the Furthermore API endpoints for 
     ```bash
     export FURTHERMORE_API_KEY="your_actual_api_key_here"
     ```
-    Alternatively, you can pass the `api_key` directly when initializing the `FurthermoreClient`.
+    Alternatively, you can pass the `api_key` directly when initializing the `Client`.
 
 ## Usage
 
-Here's a basic example of how to use the `FurthermoreClient`:
+Here's a basic example of how to use the `Client`:
 
 ```python
 import os
 import logging
-from src.client import FurthermoreClient # Adjust import based on your project structure
+from furthermore_py import Client # Adjust import based on your project structure
 
 if __name__ == '__main__':
     # Ensure API key is set
-    api_key = os.getenv(FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR)
+    api_key = os.getenv(Client.FURTHERMORE_API_KEY_ENV_VAR)
     if not api_key:
-        print(f"CRITICAL: The environment variable '{FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR}' is not set.")
-        print(f"Please set it before running this example (e.g., export {FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR}=your_key).")
+        print(f"CRITICAL: The environment variable '{Client.FURTHERMORE_API_KEY_ENV_VAR}' is not set.")
+        print(f"Please set it before running this example (e.g., export {Client.FURTHERMORE_API_KEY_ENV_VAR}=your_key).")
         exit()
 
     # Optional: Configure logging for the example
-    example_logger = logging.getLogger("FurthermoreClientExample")
+    example_logger = logging.getLogger("ClientExample")
     example_logger.setLevel(logging.INFO)
     if not example_logger.hasHandlers():
         ch = logging.StreamHandler()
@@ -76,7 +76,7 @@ if __name__ == '__main__':
         example_logger.addHandler(ch)
         example_logger.propagate = False # Avoid duplicate logs if root logger is configured
 
-    client = FurthermoreClient(logger=example_logger)
+    client = Client(logger=example_logger)
 
     try:
         print("\nFetching articles (first 3 vaults):")
