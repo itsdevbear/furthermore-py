@@ -32,14 +32,15 @@ This client provides methods to interact with the Furthermore API endpoints for 
     # .venv\Scripts\activate    # On Windows
     ```
 
-3.  **Install dependencies:**
-    With `requests` now listed in your `pyproject.toml`, you can install all project dependencies (including `requests` and the project itself in editable mode if desired) using:
+3.  **Install dependencies and the project for development:**
+    To install dependencies and make your project importable (recommended for development, especially for running examples):
     ```bash
-    uv pip install .
+    uv pip install -e .
     ```
-    Alternatively, to synchronize your environment with the `pyproject.toml` (recommended after pulling changes or modifying dependencies):
+    This installs the project in "editable" mode. If you only want to install dependencies as defined (e.g., for a non-development setup or CI), you can use:
     ```bash
     uv sync
+    # or uv pip install .
     ```
 
 4.  **Set the API Key:**
@@ -47,27 +48,27 @@ This client provides methods to interact with the Furthermore API endpoints for 
     ```bash
     export FURTHERMORE_API_KEY="your_actual_api_key_here"
     ```
-    Alternatively, you can pass the `api_key` directly when initializing the `Client`.
+    Alternatively, you can pass the `api_key` directly when initializing the `FurthermoreClient`.
 
 ## Usage
 
-Here's a basic example of how to use the `Client`:
+Here's a basic example of how to use the `FurthermoreClient`:
 
 ```python
 import os
 import logging
-from furthermore_py import Client # Adjust import based on your project structure
+from furthermore_py import FurthermoreClient # Adjust import based on your project structure
 
 if __name__ == '__main__':
     # Ensure API key is set
-    api_key = os.getenv(Client.FURTHERMORE_API_KEY_ENV_VAR)
+    api_key = os.getenv(FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR)
     if not api_key:
-        print(f"CRITICAL: The environment variable '{Client.FURTHERMORE_API_KEY_ENV_VAR}' is not set.")
-        print(f"Please set it before running this example (e.g., export {Client.FURTHERMORE_API_KEY_ENV_VAR}=your_key).")
+        print(f"CRITICAL: The environment variable '{FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR}' is not set.")
+        print(f"Please set it before running this example (e.g., export {FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR}=your_key).")
         exit()
 
     # Optional: Configure logging for the example
-    example_logger = logging.getLogger("ClientExample")
+    example_logger = logging.getLogger("FurthermoreClientExample")
     example_logger.setLevel(logging.INFO)
     if not example_logger.hasHandlers():
         ch = logging.StreamHandler()
@@ -76,7 +77,7 @@ if __name__ == '__main__':
         example_logger.addHandler(ch)
         example_logger.propagate = False # Avoid duplicate logs if root logger is configured
 
-    client = Client(logger=example_logger)
+    client = FurthermoreClient(logger=example_logger)
 
     try:
         print("\nFetching articles (first 3 vaults):")
@@ -111,11 +112,14 @@ if __name__ == '__main__':
 
 ### How to Run the Example Script
 
-To run the example script (e.g., if it's `src/examples/basic.py`), ensure your virtual environment is activated and you are in the project root directory:
+To run the example script (e.g., `src/examples/basic.py`):
 
-```bash
-python src/examples/basic.py
-```
+1.  Ensure your virtual environment is activated (`source .venv/bin/activate`).
+2.  Make sure the package is installed in editable mode from the project root directory: `uv pip install -e .`
+3.  Run the script from the project root directory:
+    ```bash
+    python src/examples/basic.py
+    ```
 
 ## API Documentation
 

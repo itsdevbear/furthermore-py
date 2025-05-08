@@ -63,9 +63,7 @@ class FurthermoreClient:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
-        self.logger.info(
-            f"Client initialized with base URL: {self.base_url}"
-        )
+        self.logger.info(f"Client initialized with base URL: {self.base_url}")
 
     def _make_request(
         self,
@@ -210,7 +208,7 @@ class FurthermoreClient:
                         if p_name_nested := protocol_obj.get("name"):
                             if isinstance(p_name_nested, str) and p_name_nested.strip():
                                 protocols.add(p_name_nested.strip())
-                
+
                 # Extract from metadata.incentivizer.name
                 if incentivizer_obj := metadata.get("incentivizer"):
                     if isinstance(incentivizer_obj, dict):
