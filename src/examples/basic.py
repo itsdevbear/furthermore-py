@@ -3,11 +3,11 @@ import os
 
 import requests
 
-from src.client import FurthermoreClient
+from furthermore_py import FurthermoreClient
 
 # Basic Example - Run this script directly to test the collector
 if __name__ == "__main__":
-    print("Attempting to use FurthermoreCo  lector (Example Usage)...")
+    print("Attempting to use FurthermoreCollector (Example Usage)...")
 
     api_key_present = os.getenv(FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR)
     if not api_key_present:
@@ -21,7 +21,7 @@ if __name__ == "__main__":
         print(
             f"Environment variable '{FurthermoreClient.FURTHERMORE_API_KEY_ENV_VAR}' is set."
         )
-        example_logger = logging.getLogger("FurthermoreClientExample")
+        example_logger = logging.getLogger("ClientExample")
         example_logger.setLevel(logging.INFO)
         if not example_logger.hasHandlers():
             ch = logging.StreamHandler()

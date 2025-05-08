@@ -122,7 +122,34 @@ class FurthermoreClient:
             )
             raise
 
-    def get_articles(
+    def _extract_and_add_name(
+        self, data: dict | None, path: tuple[str, ...], target_set: set[str]
+    ):
+        """
+        Safely extracts a name from a nested dictionary path and adds it to the target set
+        if the name is a non-empty string.
+
+        Args:
+            data: The dictionary to extract from (e.g., metadata).
+            path: A tuple of keys representing the path to the name.
+            target_set: The set to add the validated name to.
+        """
+        if not isinstance(data, dict):
+            return
+
+        current_level = data
+        for key in path[:-1]:
+            current_level = current_level.get(key)
+            if not isinstance(current_level, dict):
+                return
+
+        name_value = current_level.get(path[-1])
+        if isinstance(name_value, str):
+            stripped_name = name_value.strip()
+            if stripped_name:
+                target_set.add(stripped_name)
+
+    def get_vaults(
         self,
         offset: int = 0,
         limit: int = 10,
@@ -130,7 +157,7 @@ class FurthermoreClient:
         sort_direction: str | None = None,
     ) -> dict[str, Any]:
         """
-        Fetches a list of articles (vaults) from the API's `/vaults` endpoint.
+        Fetches a list of vaults from the API's `/vaults` endpoint.
 
         Args:
             offset: Number of records to skip (for pagination).
@@ -172,7 +199,7 @@ class FurthermoreClient:
     def get_sources(self, vault_limit_for_scan: int = 100) -> dict[str, set[str]]:
         """
         Extracts unique source names (protocols and incentivizers) by analyzing vault data.
-        This method calls `get_articles` to fetch a sample of vaults and extracts
+        This method calls `get_vaults` to fetch a sample of vaults and extracts
         protocol and incentivizer names from their metadata.
 
         Args:
@@ -191,30 +218,15 @@ class FurthermoreClient:
         protocols: set[str] = set()
         incentivizers: set[str] = set()
         try:
-            vault_data = self.get_articles(limit=vault_limit_for_scan)
+            vault_data = self.get_vaults(limit=vault_limit_for_scan)
 
-            if "vaults" in vault_data and isinstance(vault_data["vaults"], list):
-                for vault in vault_data["vaults"]:
-                    metadata = vault.get("metadata")
-                    if isinstance(metadata, dict):
-                        protocol_name = metadata.get("protocolName")
-                        if protocol_name:
-                            protocols.add(protocol_name)
-
-                        # Check metadata.protocol.name as per API response structure
-                        protocol_info = metadata.get("protocol")
-                        if isinstance(protocol_info, dict) and protocol_info.get(
-                            "name"
-                        ):
-                            protocols.add(protocol_info["name"])
-
-                        incentivizer_info = metadata.get("incentivizer")
-                        if (
-                            isinstance(incentivizer_info, dict)
-                            and incentivizer_info.get("name")
-                            and incentivizer_info["name"].strip()
-                        ):
-                            incentivizers.add(incentivizer_info["name"].strip())
+            for vault in vault_data.get("vaults", []):
+                metadata = vault.get("metadata")
+                self._extract_and_add_name(metadata, ("protocolName",), protocols)
+                self._extract_and_add_name(metadata, ("protocol", "name"), protocols)
+                self._extract_and_add_name(
+                    metadata, ("incentivizer", "name"), incentivizers
+                )
 
             self.logger.info(
                 f"Found {len(protocols)} unique protocols and {len(incentivizers)} unique incentivizers."
